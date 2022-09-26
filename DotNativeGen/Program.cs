@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 
+
 // This is very bad
 
 Console.WriteLine("Downloading natives...");
@@ -13,14 +14,12 @@ sb.AppendLine("using GTA;");
 sb.AppendLine("using GTA.Math;");
 sb.AppendLine("using GTA.Native;\n");
 sb.AppendLine("namespace GTA.Natives\n{");
-sb.AppendLine("\tpublic static class NATIVES\n\t{");
 
 // Content
 Console.WriteLine("Generating code...");
 sb.Append(JsonNativesToDot(natives));
 
 // Footer
-sb.AppendLine("\t}");
 sb.AppendLine("}");
 
 File.WriteAllText("Natives.cs", sb.ToString());
@@ -35,10 +34,10 @@ static string JsonNativesToDot(JsonNatives natives)
 static string JsonNamespaceToDot(string name, IEnumerable<KeyValuePair<string, JsonNative>> natives)
 {
     StringBuilder sb = new();
-    
-    sb.AppendLine($"\t\tpublic static class {name}\n\t\t{{");
+
+    sb.AppendLine($"\tpublic static class {name}\n\t{{");
     sb.Append(string.Join("\n", natives.Select(x => JsonNativeToDot(x.Key, x.Value))));
-    sb.AppendLine("\t\t}");
+    sb.AppendLine("\t}");
 
     return sb.ToString();
 }
@@ -70,7 +69,7 @@ static string JsonNativeToDot(string hash, JsonNative native)
     sb.Append(");\n}");
 
     // Return intended
-    return string.Join("\n", sb.ToString().Split("\n").Select(x => $"\t\t\t{x}")) + "\n";
+    return string.Join("\n", sb.ToString().Split("\n").Select(x => $"\t\t{x}")) + "\n";
 }
 
 // Converts native type to C#
@@ -120,6 +119,17 @@ static async Task<JsonNatives> GetNatives()
         "https://raw.githubusercontent.com/alloc8or/gta5-nativedb-data/master/natives.json");
     var content = await responce.Content.ReadAsStringAsync();
     return JsonConvert.DeserializeObject<JsonNatives>(content);
+}
+
+namespace NATIVES
+{
+    public static class MATH
+    {
+        public static void SIN()
+        {
+
+        }
+    }
 }
 
 class JsonNatives : Dictionary<string, Dictionary<string, JsonNative>>
